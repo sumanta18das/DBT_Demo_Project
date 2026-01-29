@@ -1,0 +1,20 @@
+version: 2
+
+analyses:
+  - name: check_landing_failures
+    description: "Utility query to view a summarized list of test failures in the Landing (Bronze) layer."
+
+  - name: check_stg_failures
+    description: "Utility query to view a summarized list of test failures in the Staging (Silver) layer."
+
+  - name: check_marts_failures
+    description: "Utility query to view a summarized list of test failures in the Marts (Gold) layer."
+
+  - name: check_landing_log
+    description: "Audit query to view last job run details of the landing (bronze) layer."
+
+  - name: check_stg_log
+    description: "Audit query to view last job run details of the staging (silver) layer."
+
+  - name: check_marts_log
+    description: "Audit query to view last job run details of the Marts (gold) layer."

@@ -1,0 +1,22 @@
+version: 2
+
+sources:
+  - name: raw_data
+    schema: main_external
+    description: "Raw CSV files stored in the local files directory"
+    tables:
+      - name: sales_fact
+        description: "Transaction record file"
+        # The line below tells DuckDB exactly where the file is
+        meta:
+          external_location: "files/sales_fact.csv"
+
+      - name: customer
+        description: "Customer master data"
+        meta:
+          external_location: "files/customer.csv"
+
+      - name: product_category
+        description: "Category mapping and prices"
+        meta:
+          external_location: "files/product_category.csv"

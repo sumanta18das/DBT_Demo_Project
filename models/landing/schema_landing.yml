@@ -1,0 +1,50 @@
+version: 2
+
+models:
+  - name: customer
+    description: "Bronze layer customer data"
+    tests:
+      - column_count_matches:
+          expected_count: 7
+    columns:
+      - name: customer_id
+        description: "Unique ID of Customer"
+        tests:
+          - generic_unique # Ensures no two customers have the same ID
+          - not_null  # Ensures every customer actually has an ID
+
+  - name: product_category
+    description: "Bronze layer product_category data"
+    tests:
+      - column_count_matches:
+          expected_count: 14
+    columns:
+      - name: product_id
+        description: "Unique ID of Product Category"
+        tests:
+          - generic_unique # Ensures no two Products have the same ID
+          - not_null  # Ensures every Product actually has an ID
+
+  - name: sales_fact
+    description: "Bronze layer sales_fact data"
+    tests:
+      - column_count_matches:
+          expected_count: 10
+    columns:
+      - name: order_id
+        description: "Unique ID of Sales"
+        tests:
+          - generic_unique # Ensures no two Sales have the same Order ID
+          - not_null  # Ensures every Sales actually has an Order ID
+      - name: order_quantity
+        description: "The number of items ordered"
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "> 0"
+              severity: warn
+              config:
+                store_failures: true # This overrides the project default
+          - not_null:  # Specifically checks for empty values
+              severity: warn
+              config:
+                store_failures: true

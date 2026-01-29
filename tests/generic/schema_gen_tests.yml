@@ -1,0 +1,22 @@
+version: 2
+
+macros: 
+  - name: test_column_count_matches
+    description: "Generic test to verify if a table's column count matches a specific expected integer."
+    arguments:
+      - name: model
+        description: "The model or source table name."
+      - name: expected_count
+        description: "The number of columns defined in the source data dictionary for the specific model."
+
+  - name: test_generic_unique
+    description: "A custom uniqueness test with a specific severity configuration (warns if failures > 10)."
+    arguments:
+      - name: column_name
+        description: "The field being audited for unique values."
+
+  - name: test_not_empty_string
+    description: "Validates that a string column does not contain an empty value or only whitespace after trimming."
+    arguments:
+      - name: column_name
+        description: "The string field to be checked for empty values."

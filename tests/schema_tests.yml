@@ -1,0 +1,9 @@
+version: 2
+
+data_tests: 
+  - name: test_customer_dates_valid
+    description: "Checks for logical data integrity in the customer staging layer. This test fails if a customer's 'end_date' occurs before their 'start_date'"
+  - name: test_payment_distribution_sums
+    description: "Financial validation for the monthly revenue distribution model. It ensures that the sum of all payment method percentages (Credit Card, PayPal, Debit, Bank Transfer) is approximately 100%, allowing for a 0.1% rounding tolerance."  
+  - name: verify_src_column_counts
+    description: "Audits the landing layer against the defined data dictionary. It compares the actual column count in the 'main_landing' schema for customer, product, category, and sales tables against expected header counts."

@@ -1,0 +1,17 @@
+
+target/
+dbt_packages/
+logs/
+
+# Python virtual environment
+venv/
+__pycache__/
+
+# Local database (DuckDB)
+*.db
+*.db.wal
+*.duckdb
+
+# OS files
+.DS_Store
+Thumbs.db

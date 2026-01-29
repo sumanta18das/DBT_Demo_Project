@@ -1,0 +1,77 @@
+
+# Name your project! Project names should contain only lowercase characters
+# and underscores. A good package name should reflect your organization's
+# name or the intended use of these models
+name: 'dbt_demo_proj'
+version: '1.0.0'
+
+# Add the flags section here
+flags:
+  require_generic_test_arguments_property: false
+
+# This setting configures which "profile" dbt uses for this project.
+profile: 'dbt_demo_proj'
+
+# These configurations specify where dbt should look for different types of files.
+# The `model-paths` config, for example, states that models in this project can be
+# found in the "models/" directory. You probably won't need to change these!
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:         # directories to be removed by `dbt clean`
+  - "target"
+  - "dbt_packages"
+
+
+# Configuring models
+# Full documentation: https://docs.getdbt.com/docs/configuring-models
+
+# In this example config, we tell dbt to build all models in the example/
+# directory as views. These settings can be overridden in the individual model
+# files using the `{{ config(...) }}` macro.
+models:
+  dbt_demo_proj:
+    # Config indicated by + and applies to all files under models/example/
+    marts:
+      +materialized: table
+      +tags: ["gold_layer"]
+      # Enable dbt constraints for all gold models by default if desired
+      +contract:
+        enforced: true
+    staging:
+      +schema: staging
+      +materialized: incremental
+      +on_schema_change: append_new_columns
+      +tags: ["silver_layer"]
+      # Enable dbt constraints for all silver models by default if desired
+      +contract:
+        enforced: true
+    landing:
+      +schema: landing
+      +materialized: table  # Default for all landing models
+      +tags: ["bronze_layer"]
+
+# Configuration for Data Tests
+data_tests:
+  dbt_demo_proj:
+    # Bronze Layer (Landing)
+    landing:
+      +store_failures: false  # No error logging in audit table
+      +schema: landing_audit
+      +severity: warn         # Only warns, does not break the pipeline
+
+    # Silver Layer (Staging)
+    staging:
+      +store_failures: true
+      +schema: staging_audit
+      +severity: error        # tops the pipeline on failure
+
+    # Gold Layer (Marts)
+    marts:
+      +store_failures: true
+      +schema: marts_audit
+      +severity: error        # Stops the pipeline on failure

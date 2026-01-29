@@ -1,0 +1,250 @@
+version: 2
+
+models:
+  - name: fact_customer_tiering
+    description: "Customer table containing information with value-based tiering."
+    meta:
+      business_owner: "Marketing Team"
+      data_confidentiality: "Highly Confidential"
+    config:
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns: [customer_id]
+    columns:
+      - name: customer_id
+        data_type: VARCHAR
+        description: "Primary Key: Unique identifier for each customer."
+        tests:
+          - unique
+          - not_null
+      - name: customer_name
+        data_type: VARCHAR
+        description: "Full name of the customer."
+        constraints:
+          - type: not_null
+        tests:
+          - not_null
+          - not_empty_string
+      - name: "Customer_Tier"
+        data_type: VARCHAR
+        description: "{{ doc('customer_tier_desc') }}"
+        constraints:
+          - type: not_null
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['High Value', 'Medium Value', 'Low Value']
+      - name: "Total_Purchase_Amount"
+        data_type: DECIMAL(38,2)
+        description: "Aggregate revenue from all orders (Price * Quantity)."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: "Total_No_Orders"
+        data_type: BIGINT
+        description: "Count of unique orders placed by the customer."
+
+  - name: fact_payment_method_analysis
+    description: "Revenue performance and distribution metrics by payment type."
+    meta:
+      business_owner: "Operations Team"
+      data_confidentiality: "Not Confidential"
+    config:
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns: [payment_method]
+    columns:
+      - name: "Payment_method"
+        data_type: VARCHAR
+        description: "Primary Key: The method used for payment (e.g., credit_card, paypal)."
+        tests:
+          - unique
+          - not_null
+      - name: "Total_revenue"
+        data_type: DECIMAL(38,2)
+        description: "Sum of revenue generated through this payment method."
+        constraints:
+          - type: not_null
+        tests:
+          - not_null
+      - name: "No_Total_Orders"
+        data_type: BIGINT
+        description: "Total volume of orders processed via this method."
+        constraints:
+          - type: not_null
+        tests:
+          - not_null
+      - name: "Avg_Order_value"
+        data_type: DOUBLE
+        description: "Average revenue per order for this payment method."
+      - name: "Distribution_Percentage"
+        data_type: DOUBLE
+        description: "Percentage contribution of this method to the grand total revenue."
+
+  - name: fact_seasonal_sales_analysis
+    description: "Detailed monthly and quarterly sales metrics with volatility analysis."
+    meta:
+      business_owner: "Sales Team"
+      data_confidentiality: "Low Confidential"
+    config:
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns: [category_name, "Month"]
+    columns:
+      - name: category_name
+        data_type: VARCHAR
+        description: "Name of the product category."
+        tests:
+          - not_null
+      - name: "Month"
+        data_type: VARCHAR
+        description: "The month and year of sales (Format: Month, Year)."
+        tests:
+          - not_null
+      - name: "Monthly_Sales"
+        data_type: DECIMAL(38,2)
+        description: "Total revenue for the specific month and category."
+        constraints:
+          - type: not_null
+        tests:
+          - not_null
+      - name: "QoQ_Growth_Percentage"
+        data_type: DOUBLE
+        description: "{{ doc('qoq_growth_desc') }}"
+      - name: "Monthly_Performance_Status"
+        data_type: VARCHAR
+        description: "Flags the month as 'Best Performing' or 'Worst Performing' based on revenue."
+      - name: "Sales_Volatility"
+        data_type: DOUBLE
+        description: "{{ doc('sales_volatility_desc') }}"
+
+  - name: fact_monthly_revenue_payment_distribution
+    description: "Monthly revenue breakdown across product categories and payment types."
+    meta:
+      business_owner: "Sales Team"
+      data_confidentiality: "Highly Confidential"
+    config:
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns: [category_name, sales_month]
+    columns:
+      - name: category_name
+        data_type: VARCHAR
+        description: "Name of the product category."
+        tests:
+          - not_null
+      - name: sales_month
+        data_type: VARCHAR
+        description: "The month and year of sales."
+        tests:
+          - not_null
+      - name: row_total_revenue
+        data_type: DECIMAL(38,2)
+        description: "Total monthly revenue for this category."
+        constraints:
+          - type: not_null
+        tests:
+          - not_null
+      - name: revenue_credit_card_Perc
+        data_type: DOUBLE
+        description: "Percentage of revenue from credit cards."
+      - name: revenue_paypal_Perc
+        data_type: DOUBLE
+        description: "Percentage of revenue from PayPal."
+      - name: revenue_debit_card_Perc
+        data_type: DOUBLE
+        description: "Percentage of revenue from debit cards."
+      - name: revenue_bank_transfer_Perc
+        data_type: DOUBLE
+        description: "Percentage of revenue from bank transfers."
+
+  - name: fact_order_review_flags
+    description: "Auditing model to identify orders with high discounts or shipping costs."
+    meta:
+      business_owner: "Operations Team"
+      data_confidentiality: "Low Confidential"
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: order_id
+        data_type: VARCHAR
+        description: "Unique identifier for the order."
+        constraints:
+          - type: not_null
+        tests:
+          - not_null
+          - unique
+      - name: customer_id
+        data_type: VARCHAR
+        description: "Identifier for the customer who placed the order."
+        constraints:
+          - type: not_null
+        tests:
+          - not_null
+      - name: product_id
+        data_type: VARCHAR
+        description: "Identifier for the product purchased."
+        constraints:
+          - type: not_null
+        tests:
+          - not_null
+      - name: order_date
+        data_type: DATE
+        description: "The date the order was placed."
+      - name: order_amount
+        data_type: DECIMAL(10,2)
+        description: "Total monetary value of the order."
+      - name: discount_applied
+        data_type: DOUBLE
+        description: "The discount percentage applied (e.g., 0.30 for 30%)."
+      - name: shipping_cost
+        data_type: DOUBLE
+        description: "Cost associated with shipping the order."
+      - name: discount_flag
+        data_type: VARCHAR
+        description: "{{ doc('discount_flag_desc') }}"
+      - name: shipping_flag
+        data_type: VARCHAR
+        description: "{{ doc('shipping_flag_desc') }}"
+
+  - name: fact_total_daily_revenue_filtered
+    description: "Filtered view of total revenue aggregated by day."
+    meta:
+      business_owner: "Sales Team"
+      data_confidentiality: "Low Confidential"
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: order_date
+        data_type: DATE
+        description: "The date of the transactions."
+        tests:
+          - not_null
+      - name: daily_total_revenue
+        data_type: DECIMAL(38,2)
+        description: "Total revenue for the day (Sum of Price * Quantity)."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+exposures:
+  - name: executive_sales_dashboard
+    label: "Executive Sales & Customer Dashboard"
+    type: dashboard
+    owner:
+      name: Sales Team
+    depends_on:
+      - ref('fact_customer_tiering')
+      - ref('fact_monthly_revenue_payment_distribution')
+      - ref('fact_seasonal_sales_analysis')

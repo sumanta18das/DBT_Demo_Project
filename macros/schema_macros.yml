@@ -1,0 +1,26 @@
+version: 2
+
+macros:
+  - name: calculate_revenue
+    description: "Calculates total revenue for a line item by multiplying price/amount by quantity."
+    arguments:
+      - name: amount_column
+        description: "The column name representing the unit price or order amount."
+      - name: quantity_column
+        description: "The column name representing the number of units ordered."
+
+  - name: filter_by_date_range
+    description: "Generates a WHERE clause to filter data based on start and end date variables. Includes compiler validation to ensure start_date is not after end_date."
+    arguments:
+      - name: column_name
+        description: "The DATE or TIMESTAMP column to apply the filter on."
+      - name: start_date
+        description: "Optional: The beginning of the date range."
+      - name: end_date
+        description: "Optional: The end of the date range."
+
+  - name: get_audit_records
+    description: "Iterates through a specified audit schema to consolidate names and counts of failed test records into a single result set."
+    arguments:
+      - name: audit_schema
+        description: "The database schema where dbt stores test failure tables (e.g., main_staging_audit)."
