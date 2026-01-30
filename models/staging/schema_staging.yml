@@ -93,11 +93,15 @@ models:
       - name: category_id
         data_type: VARCHAR
         description: "Unique identifier for the product category."
+        constraints:
+          - type: not_null
         tests:
           - not_null
       - name: category_name
         data_type: VARCHAR
         description: "name of the category."
+        constraints:
+          - type: not_null
         tests:
           - not_empty_string
       - name: subcategory

@@ -12,6 +12,19 @@ models:
         tests:
           - generic_unique # Ensures no two customers have the same ID
           - not_null  # Ensures every customer actually has an ID
+      - name: customer_name
+        description: "Full name of the customer"
+      - name: customer_email
+        description: "Email address of the customer"
+      - name: start_date
+        description: "The date the customer record became active"
+      - name: end_date
+        description: "The date the customer record expired"
+      - name: status
+        description: "The current status of the customer (e.g., Active, Inactive)"
+      - name: loaded_at_dbt
+        description: "Timestamp indicating when the record was loaded into the Bronze layer"
+          
 
   - name: product_category
     description: "Bronze layer product_category data"
@@ -24,6 +37,32 @@ models:
         tests:
           - generic_unique # Ensures no two Products have the same ID
           - not_null  # Ensures every Product actually has an ID
+      - name: category_id
+        description: "Unique ID of the Product Category"
+      - name: category_name
+        description: "The primary name of the product category"
+      - name: subcategory
+        description: "The secondary classification of the product"
+      - name: brand
+        description: "The brand name of the product"
+      - name: supplier_id
+        description: "Unique ID of the product supplier"
+      - name: cost_price
+        description: "The manufacturing or purchase cost of the item"
+      - name: retail_price
+        description: "The listed selling price of the item"
+      - name: margin_percent
+        description: "The profit margin percentage for the product"
+      - name: stock_level
+        description: "Current quantity of the item in stock"
+      - name: reorder_point
+        description: "Inventory level at which a reorder is triggered"
+      - name: discontinued
+        description: "Boolean flag indicating if the product is no longer sold"
+      - name: launch_date
+        description: "The date the product was first introduced"
+      - name: last_updated
+        description: "Timestamp of the last modification to the product record"
 
   - name: sales_fact
     description: "Bronze layer sales_fact data"
@@ -48,3 +87,15 @@ models:
               severity: warn
               config:
                 store_failures: true
+      - name: order_date
+        description: "The date the transaction occurred"
+      - name: order_amount
+        description: "The total monetary value of the order"
+      - name: payment_method
+        description: "The method used to pay for the order (e.g., Credit Card, Cash)"
+      - name: discount_applied
+        description: "The total discount amount subtracted from the order"
+      - name: shipping_cost
+        description: "The cost charged for shipping the order"
+      - name: created_at
+        description: "System timestamp indicating when the transaction was recorded"

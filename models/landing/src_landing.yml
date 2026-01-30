@@ -6,7 +6,7 @@ sources:
     description: "Raw CSV files stored in the local files directory"
     tables:
       - name: sales_fact
-        description: "Transaction record file"
+        description: "Transaction record file that must be received Daily"
         # The line below tells DuckDB exactly where the file is
         meta:
           external_location: "files/sales_fact.csv"
