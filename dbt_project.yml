@@ -6,6 +6,7 @@ name: 'dbt_demo_proj'
 version: '1.0.0'
 
 # Add the flags section here
+# Allow users to define generic test arguments directly under the test name
 flags:
   require_generic_test_arguments_property: false
 
